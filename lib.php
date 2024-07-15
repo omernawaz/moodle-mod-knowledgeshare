@@ -72,5 +72,37 @@ function knowledgeshare_update_instance($instancedata, $mform): bool
 }
 function knowledgeshare_delete_instance($id): bool
 {
+    global $DB;
+
+    if (!$mod = $DB->get_record('knowledgeshare', ['id' => $id]))
+        return false;
+    if (!$cm = get_coursemodule_from_instance('knowledgeshare', ['id' => $mod->id]))
+        return false;
+
+    $context = \course_module::instance($cm->id);
+
+    $fs = get_file_storage();
+    $fs->delete_area_files($context->id);
+
+    $transaction = $DB->start_delegated_transaction();
+
+    try {
+
+        $posts = $DB->get_records('knowledgeshare_posts', array('mod_id' => $id));
+
+        foreach ($posts as $post) {
+            $DB->delete_records('knowledgeshare_comments', array('mod_id' => $post->id));
+        }
+
+        $DB->delete_records('knowledgeshare_posts', array('mod_id' => $id));
+
+        $DB->delete_records('knowledgeshare', array('id' => $id));
+
+        $DB->commit_delegated_transaction($transaction);
+    } catch (Exception $e) {
+        $DB->rollback_delegated_transaction($transaction, $e);
+        return false;
+    }
+
     return true;
 }

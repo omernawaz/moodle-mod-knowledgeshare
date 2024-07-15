@@ -30,7 +30,7 @@
 
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="mod_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="title" TYPE="char" LENGTH='255' NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
@@ -42,7 +42,7 @@
       </KEYS>
 
       <INDEXES>
-          <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+          <INDEX NAME="mod_id" UNIQUE="false" FIELDS="mod_id"/>
       </INDEXES>
 
     </TABLE>
