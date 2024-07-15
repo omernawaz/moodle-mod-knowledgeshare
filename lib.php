@@ -70,16 +70,17 @@ function knowledgeshare_update_instance($instancedata, $mform): bool
     $status = $DB->update_record('knowledgeshare', $instancedata);
     return $status;
 }
+
 function knowledgeshare_delete_instance($id): bool
 {
     global $DB;
 
     if (!$mod = $DB->get_record('knowledgeshare', ['id' => $id]))
         return false;
-    if (!$cm = get_coursemodule_from_instance('knowledgeshare', ['id' => $mod->id]))
+    if (!$cm = get_coursemodule_from_instance('knowledgeshare', $mod->id))
         return false;
 
-    $context = \course_module::instance($cm->id);
+    $context = \context_module::instance($cm->id);
 
     $fs = get_file_storage();
     $fs->delete_area_files($context->id);
@@ -88,13 +89,13 @@ function knowledgeshare_delete_instance($id): bool
 
     try {
 
-        $posts = $DB->get_records('knowledgeshare_posts', array('mod_id' => $id));
+        $posts = $DB->get_records('knowledgeshare_post', array('mod_id' => $id));
 
         foreach ($posts as $post) {
             $DB->delete_records('knowledgeshare_comments', array('mod_id' => $post->id));
         }
 
-        $DB->delete_records('knowledgeshare_posts', array('mod_id' => $id));
+        $DB->delete_records('knowledgeshare_post', array('mod_id' => $id));
 
         $DB->delete_records('knowledgeshare', array('id' => $id));
 
