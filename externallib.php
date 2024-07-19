@@ -32,7 +32,6 @@ class mod_knowledgeshare_external extends external_api
     public static function upvote_post($postid, $modid)
     {
         global $CFG, $USER, $DB;
-        require_once("$CFG->dirroot/group/lib.php");
 
         $params = self::validate_parameters(self::upvote_post_parameters(), array('postid' => $postid, 'modid' => $modid));
 
@@ -80,5 +79,52 @@ class mod_knowledgeshare_external extends external_api
     public static function upvote_post_returns()
     {
         return new external_value(PARAM_RAW, 'Returns updated count of the upvotes on the post.');
+    }
+
+    public static function add_reply_parameters()
+    {
+        return new external_function_parameters(
+            [
+                'postid' => new external_value(PARAM_INT, 'id of post to like'),
+                'modid' => new external_value(PARAM_INT, 'id of cm where post exists'),
+                'content' => new external_value(PARAM_CLEANHTML, 'content of the reply')
+            ]
+        );
+    }
+
+    public static function add_reply($postid, $modid, $content)
+    {
+        global $CFG, $USER, $DB;
+
+        $params = self::validate_parameters(
+            self::add_reply_parameters(),
+            array(
+                'postid' => $postid,
+                'modid' => $modid,
+                'content' => $content
+            )
+        );
+
+        [$course, $cm] = get_course_and_cm_from_cmid($modid, 'knowledgeshare');
+        $context = \CONTEXT_MODULE::instance($cm->id);
+
+        require_course_login($course, false, $cm);
+        require_capability('mod/knowledgeshare:reply', $context, $USER->id);
+
+        $newreply = new stdClass();
+
+        $newreply->post_id = $postid;
+        $newreply->author_id = $USER->id;
+        $newreply->content = $content;
+        $newreply->timemodified = time();
+
+        $DB->insert_record('knowledgeshare_comments', $newreply, false, false);
+
+        return true;
+    }
+
+    public static function add_reply_returns()
+    {
+        return new external_value(PARAM_BOOL, 'Returns true if comment was successfully added');
     }
 }

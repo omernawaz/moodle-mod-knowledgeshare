@@ -1,5 +1,5 @@
 import Modal from 'core/modal';
-import ModalFactory from 'core/modal_factory';
+import ModalRegistry from 'core/modal_registry';
 
 export default class ReplyModal extends Modal {
     static TYPE = "mod_knowledgeshare/reply_modal";

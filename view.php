@@ -31,6 +31,29 @@ function fetch_user_by_id($id)
     return $record->firstname . ' ' . $record->lastname;
 }
 
+function has_already_upvoted_post($post, $userid)
+{
+    global $DB;
+    $already_upvoted = $DB->get_record('knowledgeshare_upvotes', ['post_id' => $post->id, 'upvoter_id' => $userid]);
+    if (!empty($already_upvoted)) {
+        return true;
+    }
+    return false;
+}
+
+function fetch_replies_for_post($post)
+{
+    global $DB;
+    $replies = $DB->get_records('knowledgeshare_comments', ['post_id' => $post->id], 'timemodified desc');
+
+    foreach ($replies as $reply) {
+        $reply->author = fetch_user_by_id($reply->author_id);
+        $reply->comment = $reply->content;
+    }
+
+    return $replies;
+}
+
 function fetch_posts($mod_id, $context)
 {
     global $DB, $USER;
@@ -40,12 +63,12 @@ function fetch_posts($mod_id, $context)
 
     foreach ($posts as $post) {
 
-        $already_upvoted = $DB->get_record('knowledgeshare_upvotes', ['post_id' => $post->id, 'upvoter_id' => $USER->id]);
-        if (!empty($already_upvoted)) {
-            $post->upvoted = true;
-        }
+        $post->upvoted = has_already_upvoted_post($post, $USER->id);
 
         $post->username = fetch_user_by_id($post->author_id);
+
+        $post->replies = array_values(fetch_replies_for_post($post));
+
         $post->content = file_rewrite_pluginfile_urls($post->content, 'pluginfile.php', $context->id, 'mod_knowledgeshare', 'student_data', $post->itemid);
     }
 
