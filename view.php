@@ -24,24 +24,54 @@
 
 require('../../config.php');
 
+function fetch_user_by_id($id)
+{
+    global $DB;
+    $record = $DB->get_record('user', array('id' => $id), 'firstname,lastname');
+    return $record->firstname . ' ' . $record->lastname;
+}
 
+function fetch_posts($mod_id, $context)
+{
+    global $DB, $USER;
+    $posts = $DB->get_records('knowledgeshare_posts', array('mod_id' => $mod_id), 'timemodified desc');
+
+
+
+    foreach ($posts as $post) {
+
+        $already_upvoted = $DB->get_record('knowledgeshare_upvotes', ['post_id' => $post->id, 'upvoter_id' => $USER->id]);
+        if (!empty($already_upvoted)) {
+            $post->upvoted = true;
+        }
+
+        $post->username = fetch_user_by_id($post->author_id);
+        $post->content = file_rewrite_pluginfile_urls($post->content, 'pluginfile.php', $context->id, 'mod_knowledgeshare', 'student_data', $post->itemid);
+    }
+
+    return $posts;
+}
 
 $id = required_param('id', PARAM_INT);
 [$course, $cm] = get_course_and_cm_from_cmid($id, 'knowledgeshare');
 $instance = $DB->get_record('knowledgeshare', ['id' => $cm->instance], '*', MUST_EXIST);
-
+$context = \CONTEXT_MODULE::instance($cm->id);
 require_course_login($course, false, $cm);
 
 $PAGE->set_url(new moodle_url('/mod/knowledgeshare;/view.php'));
-$PAGE->set_context(\context_module::instance($cm->id));
+$PAGE->set_context($context);
+$PAGE->requires->js_call_amd('mod_knowledgeshare/upvote');
+$PAGE->requires->js_call_amd('mod_knowledgeshare/reply');
 
-$posts = [];
+
+
+$posts = fetch_posts($id, $context);
 
 $templatecontext = array(
-    'title' => $instance->name,
-    'desc' => $instance->intro,
-    'posts' => $posts,
+    'posts' => array_values($posts),
     'time' => $instance->timemodified,
+    'createurl' => new moodle_url('/mod/knowledgeshare/create_post.php'),
+    'moduleid' => $id,
 );
 
 echo $OUTPUT->header();

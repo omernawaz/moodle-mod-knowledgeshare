@@ -34,13 +34,79 @@
 }}
 
 
-<p><small>Created On: {{#userdate}} {{time}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}} </small></p>
 
-{{#posts}}
-    <!-- Display Student Posts Here !-->
-{{/posts}}
+<div class = 'container d-flex flex-column m-3'>
+    <p><small>Created On: {{#userdate}} {{time}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}} </small></p>
 
-{{^posts}}
-    {{#str}} view:noposts, mod_knowledgeshare {{/str}}
-{{/posts}}
+     {{^posts}}
+        {{#str}} view:noposts, mod_knowledgeshare {{/str}}
+    {{/posts}}
+</div>
+
+
+<div class = 'container flex-column w-75' >
+    <button type = 'button', class = 'btn btn-success m-3' onclick='location.href="{{createurl}}?id={{moduleid}}"'>Create</button>
+
+    {{#posts}}
+
+    <div class="card m-3">
+
+        <div class="card-header">
+            <h3> {{{title}}} </h3> 
+        </div>
+
+        <div class="card-body">
+            {{{content}}} 
+        </div>
+
+        <div class="card-footer d-flex flex-column">
+
+            <div class = 'flex-fill'>
+                <div>
+                    <b>Posted On: </b> {{#userdate}} {{time}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}
+                </div>
+                <div>
+                    <b>By: </b> {{username}} 
+                </div>
+                <div class='upvote-html'>
+                    <b >Upvotes: </b> {{upvotes}}
+                </div>
+
+                
+                
+            </div>
+
+            <div class = 'flex-fill text-right'>
+                <a href = '#' class = 'reply-btn' data-modid = {{moduleid}} data-postid = {{id}}>Reply</a>
+                |
+                {{^upvoted}}<a href = '#' class = 'upvote-btn' data-modid='{{moduleid}}' data-postid='{{id}}'>Upvote</a>{{/upvoted}}
+                {{#upvoted}}<a href = '#' class = 'upvote-btn' data-modid='{{moduleid}}' data-postid='{{id}}'><b>Upvoted</b></a>{{/upvoted}}
+            </div>
+
+
+            {{#replies}}
+                <div class="card m-3">
+                    <div class="card-body">
+                        {{{comment}}} 
+                    </div>
+                    <div class="card-footer">
+                        By: {{username}}
+                    </div>
+                </div>
+            {{/replies}}
+        
+        </div>
+
+    </div>
+
+       
+    {{/posts}}
+
+</div>
+
+
+
+
+
+
 

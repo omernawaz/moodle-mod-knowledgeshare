@@ -17,14 +17,14 @@
 /**
  * Version metadata for the local_message plugin.
  *
- * @package   local_message
+ * @package   mod_knowledgeshare
  * @copyright 2024, Omer Nawaz <omarnawaz29@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2024071101;
+$plugin->version = 2024071104;
 $plugin->requires = 2023042408.04;
 $plugin->component = 'mod_knowledgeshare';
 $plugin->maturity = MATURITY_ALPHA;

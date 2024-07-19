@@ -89,13 +89,13 @@ function knowledgeshare_delete_instance($id): bool
 
     try {
 
-        $posts = $DB->get_records('knowledgeshare_post', array('mod_id' => $id));
+        $posts = $DB->get_records('knowledgeshare_posts', array('mod_id' => $id));
 
         foreach ($posts as $post) {
-            $DB->delete_records('knowledgeshare_comments', array('mod_id' => $post->id));
+            $DB->delete_records('knowledgeshare_comments', array('post_id' => $post->id));
         }
 
-        $DB->delete_records('knowledgeshare_post', array('mod_id' => $id));
+        $DB->delete_records('knowledgeshare_posts', array('mod_id' => $id));
 
         $DB->delete_records('knowledgeshare', array('id' => $id));
 
@@ -106,4 +106,21 @@ function knowledgeshare_delete_instance($id): bool
     }
 
     return true;
+}
+
+function knowledgeshare_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array())
+{
+
+    $filename = $args[1];
+    $itemid = $args[0];
+    $filepath = "/$context->id/mod_knowledgeshare/$filearea/$itemid/$filename";
+    $fs = get_file_storage();
+
+    //$files = $fs->get_area_files($context, 'mod_knowledgeshare', $filearea);
+
+    if (!$file = $fs->get_file_by_hash(sha1($filepath))) {
+        send_file_not_found();
+    } else {
+        send_stored_file($file, 0, 0, true, array());
+    }
 }

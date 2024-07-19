@@ -26,15 +26,17 @@
 
     </TABLE>
 
-    <TABLE NAME="knowledgeshare_post" COMMENT="each record is a post from a student">
+    <TABLE NAME="knowledgeshare_posts" COMMENT="each record is a post from a student">
 
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="mod_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="author_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="title" TYPE="char" LENGTH='255' NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="upvotes" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH='4' NOTNULL="true" DEFAULT='0' SEQUENCE="false"/>
       </FIELDS>
 
       <KEYS>
@@ -51,15 +53,38 @@
 
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="post_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="author_id" TYPE="int" LENGTH="10" NOTNULL="true"  SEQUENCE="false"/>
-        <FIELD NAME="time_posted" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
 
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+
+       <INDEXES>
+          <INDEX NAME="post_id" UNIQUE="false" FIELDS="post_id"/>
+      </INDEXES>
+
+    </TABLE>
+
+    <TABLE NAME="knowledgeshare_upvotes" COMMENT="each record is a comment on a user's post">
+
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="post_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="upvoter_id" TYPE="int" LENGTH="10" NOTNULL="true"  SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+
+       <INDEXES>
+          <INDEX NAME="post_id" UNIQUE="false" FIELDS="post_id"/>
+      </INDEXES>
 
     </TABLE>
 

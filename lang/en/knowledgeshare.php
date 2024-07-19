@@ -34,7 +34,16 @@ $string['pluginadministration'] = 'Knowledge Share Manage';
 
 $string['form:title'] = 'Title for this Knowledgeshare: ';
 $string['form:intro'] = 'What is the Knowledgeshare about?: ';
+
 $string['form:errornotitle'] = 'Name is required';
 $string['form:errornointro'] = 'Description is required';
 
 $string['view:noposts'] = "There have been no posts made yet! Why don't you make the first one :)";
+
+$string['create:pagetitle'] = "Create";
+$string['create:heading'] = "Create a new post.";
+$string['create:cancelled'] = "Cancelled creating a post";
+
+$string['create:btn-create'] = "Create";
+$string['create:title'] = "Give your post a title: ";
+$string['create:desc'] = "Share some content: ";
