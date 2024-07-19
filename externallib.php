@@ -127,4 +127,65 @@ class mod_knowledgeshare_external extends external_api
     {
         return new external_value(PARAM_BOOL, 'Returns true if comment was successfully added');
     }
+
+    public static function delete_post_or_reply_parameters()
+    {
+        return new external_function_parameters(
+            [
+                'itemid' => new external_value(PARAM_INT, 'id of post/reply to like'),
+                'modid' => new external_value(PARAM_INT, 'id of cm where post exists'),
+                'action' => new external_value(PARAM_TEXT, 'content of the reply')
+            ]
+        );
+    }
+
+    public static function delete_post_or_reply($itemid, $modid, $action)
+    {
+        global $CFG, $USER, $DB;
+
+        $params = self::validate_parameters(
+            self::delete_post_or_reply_parameters(),
+            array(
+                'itemid' => $itemid,
+                'modid' => $modid,
+                'action' => $action
+            )
+        );
+
+        [$course, $cm] = get_course_and_cm_from_cmid($modid, 'knowledgeshare');
+        $context = \CONTEXT_MODULE::instance($cm->id);
+
+        require_course_login($course, false, $cm);
+        require_capability('mod/knowledgeshare:createpost', $context, $USER->id);
+
+        $transaction = $DB->start_delegated_transaction();
+
+        try {
+            if ($action == 'deletepost') {
+                $deletePosts = $DB->delete_records('knowledgeshare_posts', ['id' => $itemid]);
+                $deleteRepliesOnPost = $DB->delete_records('knowledgeshare_comments', ['post_id' => $itemid]);
+
+                if ($deletePosts && $deleteRepliesOnPost) {
+                    $DB->commit_delegated_transaction($transaction);
+                    return true;
+                }
+            } else {
+                $deleteReply = $DB->delete_records('knowledgeshare_comments', ['id' => $itemid]);
+
+                if ($deleteReply) {
+                    $DB->commit_delegated_transaction($transaction);
+                    return true;
+                }
+            }
+
+            return false;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public static function delete_post_or_reply_returns()
+    {
+        return new external_value(PARAM_BOOL, 'Returns true if post/reply was successfully delete');
+    }
 }

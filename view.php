@@ -43,12 +43,16 @@ function has_already_upvoted_post($post, $userid)
 
 function fetch_replies_for_post($post)
 {
-    global $DB;
+    global $DB, $USER;
     $replies = $DB->get_records('knowledgeshare_comments', ['post_id' => $post->id], 'timemodified desc');
 
     foreach ($replies as $reply) {
         $reply->author = fetch_user_by_id($reply->author_id);
         $reply->comment = $reply->content;
+
+        if ($reply->author_id == $USER->id) {
+            $reply->self_reply = true;
+        }
     }
 
     return $replies;
@@ -62,6 +66,10 @@ function fetch_posts($mod_id, $context)
 
 
     foreach ($posts as $post) {
+
+        if ($post->author_id == $USER->id) {
+            $post->self_post = true;
+        }
 
         $post->upvoted = has_already_upvoted_post($post, $USER->id);
 
@@ -85,6 +93,8 @@ $PAGE->set_url(new moodle_url('/mod/knowledgeshare;/view.php'));
 $PAGE->set_context($context);
 $PAGE->requires->js_call_amd('mod_knowledgeshare/upvote');
 $PAGE->requires->js_call_amd('mod_knowledgeshare/reply');
+$PAGE->requires->js_call_amd('mod_knowledgeshare/delete');
+
 
 
 

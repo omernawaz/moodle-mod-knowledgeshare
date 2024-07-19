@@ -41,7 +41,6 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
         ),
     ),
-
     'mod/knowledgeshare:close' => array(
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',

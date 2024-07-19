@@ -2,8 +2,10 @@ define(['jquery', 'core/ajax', 'core/modal_factory', 'core/custom_interaction_ev
 
     let trigger = $(".reply-btn");
 
-    let postid = trigger.data('postid');
-    let modid = trigger.data('modid');
+    var clickedInstanceBtn = null;
+    $(".reply-btn").click(function (e) { 
+        clickedInstanceBtn = $(this);
+    });
 
 
     ModalFactory.create({
@@ -19,6 +21,8 @@ define(['jquery', 'core/ajax', 'core/modal_factory', 'core/custom_interaction_ev
                 let commentContent = comment[0].value;
                 console.log(comment[0].value);
 
+                let modid = clickedInstanceBtn.data('modid');
+                let postid = clickedInstanceBtn.data('postid');
 
                 if(commentContent == ''){
                     $(comment).addClass("is-invalid");
