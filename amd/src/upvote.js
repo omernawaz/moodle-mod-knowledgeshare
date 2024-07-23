@@ -1,6 +1,5 @@
-define(['jquery', 'core/ajax'], function($, Ajax){
-    //var test = $('.upvote-btn');
-    $('.upvote-btn').click(function (e) { 
+define(['jquery', 'core/ajax'], function($, Ajax) {
+    $('.upvote-btn').click(function(e) {
         e.preventDefault();
         let element = $(this);
         let modid = element.data('modid');
@@ -17,7 +16,7 @@ define(['jquery', 'core/ajax'], function($, Ajax){
         let button = $(this);
         Ajax.call([request])[0].done(function(result) {
             result = JSON.parse(result);
-            if(result.status == 'upvote'){
+            if (result.status == 'upvote') {
                 $('.upvote-html').html("<b>Upvotes: </b>" + result.upvotes);
                 button.html("<b>Upvoted</b>");
             } else {
@@ -25,9 +24,8 @@ define(['jquery', 'core/ajax'], function($, Ajax){
                 button.html("Upvote");
             }
 
-        }).fail(function(error){
+        }).fail(function(error) {
             console.log(error);
         });
-        
     });
 });

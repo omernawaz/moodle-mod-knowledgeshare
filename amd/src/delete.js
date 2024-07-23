@@ -1,5 +1,5 @@
-define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/ajax','core/notification'],
-    function($,ModalFactory,ModalEvents,Ajax,Notification){
+define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/ajax', 'core/notification'],
+    function($, ModalFactory, ModalEvents, Ajax, Notification) {
         let trigger = $('.delete-btn');
 
         let postid = null;
@@ -10,7 +10,7 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/ajax','core/n
         var clickedInstanceBtn = null;
         let posttype = '';
 
-        $(".delete-btn").click(function (e) { 
+        $(".delete-btn").click(function(e) {
             e.preventDefault();
             clickedInstanceBtn = $(this);
 
@@ -19,13 +19,12 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/ajax','core/n
             action = clickedInstanceBtn.data('action');
 
 
-            if (action.includes('deletepost'))
+            if (action.includes('deletepost')) {
                 posttype = "Post";
-            else 
+            } else {
                 posttype = "Comment";
+            }
         });
-
-        
 
         ModalFactory.create({
             type: ModalFactory.types.DELETE_CANCEL,
@@ -33,9 +32,9 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/ajax','core/n
             body: "Are you sure you'd like to continue? This action cannot be undone",
             large: false,
         }, trigger)
-            .done(function(modal){
+            .done(function(modal) {
 
-                modal.getRoot().on(ModalEvents.delete, function(e){
+                modal.getRoot().on(ModalEvents.delete, function(e) {
                     e.preventDefault();
 
                     postid = clickedInstanceBtn.data('postid');
@@ -51,11 +50,10 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/ajax','core/n
                         }
                     };
 
-                    Ajax.call([request])[0].done(function(result){
-                        if(result)
+                    Ajax.call([request])[0].done(function(result) {
+                        if (result) {
                             window.location.reload();
-                        else
-                        {
+                        } else {
                             Notification.addNotification({
                                 message: "Failed to delete",
                                 type: 'error',
@@ -64,7 +62,6 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/ajax','core/n
                     }).fail(function(error) {
                         console.log(error);
                     });
-                    
                 });
 
             });
